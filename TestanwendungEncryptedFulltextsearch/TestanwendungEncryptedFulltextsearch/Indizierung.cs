@@ -20,12 +20,12 @@ namespace TestanwendungEncryptedFulltextsearch
             {
                 var document = File.OpenText(path).ReadToEnd();
 
-                IndexDocument(document);
+                IndexDocument(document, Path.GetFileName(document));
             }
         }
 
         private Dictionary<string, List<Suchtreffer>> Index = new Dictionary<string, List<Suchtreffer>>();
-        private void IndexDocument(string document)
+        private void IndexDocument(string document, string filename)
         {
             var words = document.Split(' ', '.', ',', '!', '?', ':', ';');
             var counter = 0;
@@ -34,11 +34,11 @@ namespace TestanwendungEncryptedFulltextsearch
             {
                 if (Index.ContainsKey(word))
                 {
-                    Index[word].Add(new Suchtreffer() { wordnumber = counter });
+                    Index[word].Add(new Suchtreffer(counter, filename));
                 }
                 else
                 {
-                    Index.Add(word, new List<Suchtreffer>() { new Suchtreffer() { wordnumber(counter) } });
+                    Index.Add(word, new List<Suchtreffer>() { new Suchtreffer(counter, filename) });
                 }
                 counter++;
             }

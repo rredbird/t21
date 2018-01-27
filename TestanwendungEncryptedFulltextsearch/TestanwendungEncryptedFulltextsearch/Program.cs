@@ -18,6 +18,7 @@ namespace TestanwendungEncryptedFulltextsearch
             }
             Console.WriteLine("Wikipedia ship");
             foreach (var searchresult in indizierung.Search("Wikipedia ship"))
+
             {
                 Console.WriteLine(searchresult.filename + ":" + searchresult.wordnumber);
             }

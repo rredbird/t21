@@ -5,7 +5,7 @@ using System.Text;
 
 namespace TestanwendungEncryptedFulltextsearch
 {
-    class Indizierung
+    public class Indizierung
     {
         private string documentPath = @"C:\Users\rui\Dropbox\t21\Testdokumente";
 
@@ -53,22 +53,61 @@ namespace TestanwendungEncryptedFulltextsearch
 
         public List<Suchtreffer> Search(string query)
         {
-            List<List<Suchtreffer>> indicees = new List<List<Suchtreffer>>();
-            var words = query.ToLower().Split(' ');
-            foreach (var word in words)
+            var retVal = SplitQuery(query);
+
+            return retVal;
+        }
+
+        private List<Suchtreffer> SplitQuery(string query)
+        {
+            var indexOfUnd = query.IndexOf('+');
+            var indexOfOder = query.IndexOf('|');
+
+            if (indexOfOder == -1 && indexOfUnd == -1)
             {
-                if (Index.ContainsKey(word))
+                if (Index.ContainsKey(query))
                 {
-                    indicees.Add(Index[word]);
+                    return Index[query];
                 }
             }
-            var retVal = new List<Suchtreffer>();
-            if (indicees.Count == words.Length)
+            else
             {
-                foreach (var index in indicees)
+                if (indexOfOder == -1 || indexOfUnd < indexOfOder)
                 {
-                    retVal.AddRange(index);
+                    return Und(query.Substring(0, indexOfUnd).Trim(), query.Substring(indexOfUnd) + 1);
                 }
+                if (indexOfUnd == -1 || indexOfOder <= indexOfUnd)
+                {
+                    return Oder(query.Substring(0, indexOfOder).Trim(), query.Substring(indexOfOder) + 1);
+                }
+            }
+            return new List<Suchtreffer>();
+        }
+
+        private List<Suchtreffer> Und(string query1, string query2)
+        {
+            var retVal = new List<Suchtreffer>();
+
+            if (Index.ContainsKey(query1))
+            {
+                retVal.AddRange(Index[query1]);
+            }
+            if (Index.ContainsKey(query2))
+            {
+                retVal.AddRange(Index[query2]);
+            }
+
+            return retVal;
+        }
+
+        public List<Suchtreffer> Oder(string query1, string query2)
+        {
+            var retVal = new List<Suchtreffer>();
+
+            if (Index.ContainsKey(query1) && Index.ContainsKey(query2))
+            {
+                retVal.AddRange(Index[query1]);
+                retVal.AddRange(Index[query2]);
             }
             return retVal;
         }

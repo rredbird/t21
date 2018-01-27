@@ -10,5 +10,19 @@ namespace Tests
         public void TestMethod1()
         {
         }
+
+        [TestMethod]
+        public void SingleUnd()
+        {
+            var search = new Indizierung();
+
+            search.IndexDocuments();
+
+            foreach (var item in search.Search("James+Bond"))
+            {
+                Assert.AreEqual("", item.filename);
+            }
+
+        }
     }
 }
